@@ -15,11 +15,15 @@ class ViewController: UIViewController {
     @IBOutlet weak var diceFourImageView: UIImageView!
     @IBOutlet weak var diceFiveImageView: UIImageView!
     
+    @IBOutlet weak var solutionsStackView: UIStackView!
     var currentDiceRoll: [Int] = []
+    
+    var yatzheeSolutionsCalculator: YahtzeeSolutionCalculator!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+        self.yatzheeSolutionsCalculator = YahtzeeSolutionCalculator()
     }
     
     @IBAction func rollDiceButtonTapped(_ sender: Any) {
@@ -34,6 +38,31 @@ class ViewController: UIViewController {
         diceThreeImageView.image = UIImage(named: "\(currentDiceRoll[2])")
         diceFourImageView.image = UIImage(named: "\(currentDiceRoll[3])")
         diceFiveImageView.image = UIImage(named: "\(currentDiceRoll[4])")
+        
+        updateAvailableSolutions()
+    }
+    
+    private func updateAvailableSolutions() {
+        
+        clearSolutionsStackView()
+        let availableSolutions = yatzheeSolutionsCalculator.availableSolutions(for: currentDiceRoll)
+        
+        for availableSolution in availableSolutions {
+            let solutionLabel = AvailableSolutionLabel(frame: .zero, solution: availableSolution)
+            solutionLabel.translatesAutoresizingMaskIntoConstraints = false
+            solutionsStackView.addArrangedSubview(solutionLabel)
+            
+            NSLayoutConstraint.activate([
+                solutionsStackView.widthAnchor.constraint(equalTo: solutionsStackView.widthAnchor)
+            ])
+        }
+    }
+    
+    private func clearSolutionsStackView() {
+        for arrangedSubview in solutionsStackView.arrangedSubviews {
+            solutionsStackView.removeArrangedSubview(arrangedSubview)
+            arrangedSubview.removeFromSuperview()
+        }
     }
 }
 
